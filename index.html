@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ALEXIS RHEE | Projects</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#162825",
+                    "on-secondary-fixed": "#3a0a03",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#0d1f1c",
+                    "inverse-on-surface": "#f3f0ef",
+                    "on-primary-fixed-variant": "#384a47",
+                    "on-tertiary-container": "#a6a5a0",
+                    "outline": "#727877",
+                    "on-surface": "#1c1b1b",
+                    "primary-fixed": "#d2e7e2",
+                    "secondary-container": "#fda592",
+                    "surface-variant": "#e5e2e1",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#474743",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#2c3e3b",
+                    "tertiary-container": "#3b3b37",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#ffb4a4",
+                    "surface-container": "#f0eded",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#b7cbc6",
+                    "outline-variant": "#c2c8c6",
+                    "surface-container-high": "#eae7e7",
+                    "surface-container-low": "#f6f3f2",
+                    "inverse-surface": "#313030",
+                    "on-error-container": "#93000a",
+                    "on-primary-container": "#95a9a5",
+                    "tertiary": "#252522",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-tertiary-fixed": "#1b1c19",
+                    "on-surface-variant": "#424847",
+                    "on-secondary-fixed-variant": "#733427",
+                    "on-secondary-container": "#78382a",
+                    "secondary": "#904b3c",
+                    "on-background": "#1c1b1b",
+                    "inverse-primary": "#b7cbc6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#4f625f",
+                    "secondary-fixed": "#ffdad3",
+                    "surface-dim": "#dcd9d9",
+                    "tertiary-fixed-dim": "#c8c6c2",
+                    "surface": "#fcf9f8",
+                    "tertiary-fixed": "#e4e2dd",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#fcf9f8",
+                    "background": "#fcf9f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Noto Serif"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+        }
+        h1, h2, h3, .serif {
+            font-family: 'Noto Serif', serif;
+        }
+        /* Custom scrollbar for gallery feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fcf9f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #162825;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-secondary selection:text-white">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-6 md:px-12 py-6 bg-[#fcf9f8]/80 dark:bg-[#162825]/80 backdrop-blur-md z-50 transition-all duration-300">
+<div class="text-2xl font-bold tracking-tighter text-[#162825] dark:text-[#fcf9f8]">ALEXIS RHEE</div>
+<div class="hidden md:flex space-x-10 items-center">
+<a class="font-['Noto_Serif'] tracking-wider uppercase text-sm text-[#162825] dark:text-[#fcf9f8] hover:text-[#904b3c] transition-colors" href="#">Home</a>
+<a class="font-['Noto_Serif'] tracking-wider uppercase text-sm text-[#904b3c] border-b-2 border-[#904b3c] pb-1" href="#">Projects</a>
+<a class="font-['Noto_Serif'] tracking-wider uppercase text-sm text-[#162825] dark:text-[#fcf9f8] hover:text-[#904b3c] transition-colors" href="#">Research</a>
+<a class="font-['Noto_Serif'] tracking-wider uppercase text-sm text-[#162825] dark:text-[#fcf9f8] hover:text-[#904b3c] transition-colors" href="#">Methodology</a>
+<a class="font-['Noto_Serif'] tracking-wider uppercase text-sm text-[#162825] dark:text-[#fcf9f8] hover:text-[#904b3c] transition-colors" href="#">Contact</a>
+</div>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-screen-2xl mx-auto">
+<!-- Hero Section / Title -->
+<header class="mb-20">
+<h1 class="text-6xl md:text-8xl font-bold tracking-tighter text-primary mb-6">Selected <br/><span class="italic text-secondary">Works</span></h1>
+<p class="font-body text-lg text-on-surface-variant max-w-xl leading-relaxed">
+                A survey of performance art, directorial studies, and visual inquiries conducted between 2018—2024.
+            </p>
+</header>
+<!-- Filtering System -->
+<div class="flex flex-wrap gap-8 mb-16 border-b border-outline-variant/20 pb-8">
+<button class="font-label text-xs uppercase tracking-[0.2em] text-secondary font-bold relative after:content-[''] after:absolute after:-bottom-8 after:left-0 after:w-full after:h-[2px] after:bg-secondary">
+                All
+            </button>
+<button class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant hover:text-primary transition-colors">
+                Directing
+            </button>
+<button class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant hover:text-primary transition-colors">
+                Performance
+            </button>
+<button class="font-label text-xs uppercase tracking-[0.2em] text-on-surface-variant hover:text-primary transition-colors">
+                Art
+            </button>
+</div>
+<!-- Project Grid: Asymmetric Layout -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-y-24 md:gap-x-12">
+<!-- Project 01: Large Vertical -->
+<div class="md:col-span-7 group cursor-pointer">
+<div class="relative overflow-hidden bg-surface-variant aspect-[4/5] mb-8">
+<img alt="" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" data-alt="Cinematic wide shot of a minimalist theater stage with a single spotlight illuminating a solitary chair in a dark void" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrWPvck2XVA_zTLRWu7t71iwGHAkDE2zpnJXCxwocXoBmBr9YJbceEt1gOv2AZt8M_Sih0bTcREONC4UcGKwrWBO2Ii5tIO1afyeRqPgJWUVHXpCdqf85tiwv3TP0XQkSszYahVy1Y3YCFwfHOf_8z42QF08IBWKA4K5ezYDha2vYZRnAII10ReNs6tfxzohbspm2QgA_J79rmOA4wx0I9cpcMK8xwe9YE7B-8r3bHK6Bouwq9MnVMT1DOCmP9UvM5h5P0UiWW2I1i"/>
+<div class="absolute top-0 left-0 p-8">
+<span class="bg-surface-container-lowest px-4 py-2 text-[10px] uppercase tracking-widest font-label text-primary">Directing</span>
+</div>
+</div>
+<div class="max-w-md">
+<h2 class="text-3xl font-headline font-bold text-primary mb-3">Echoes of the Void</h2>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed mb-6">
+                        An experimental stage production exploring the boundaries of silence and architectural space within a black-box environment.
+                    </p>
+<a class="font-label text-[10px] uppercase tracking-widest text-primary border-b border-secondary-fixed-dim pb-1 hover:border-secondary transition-colors" href="#">View Inquiry</a>
+</div>
+</div>
+<!-- Project 02: Horizontal Shifted -->
+<div class="md:col-span-5 md:pt-48 group cursor-pointer">
+<div class="relative overflow-hidden bg-surface-variant aspect-square mb-8">
+<img alt="" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" data-alt="Macro close-up of textured oil paint on canvas with deep earthy reds and charcoal blacks creating an abstract landscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJppGYXDHxQeUTMCiQm6H0TxUySuv8TkgEplfvfNJwOWVKd9aUijXcJyvOPKiscokSPdk-Lm2NAPl7O91DlNuPu72NDr5krGNNFeIfBqGsZONkBgISHiRS6grQo6Oqo2lPW1sYLeMpbAL-UbvAYb_OhGn8WNrCwWlHxLgOzxDO60b9Shwww7tV1BOT6Ht55AmVtyCy_6AJw8WJRxOUb9ZPGtkyxh0qyUvSqMwq_No9QMSarsMMHFW3rKCsCszzCfDMsIjVR_Lx_qfz"/>
+<div class="absolute top-0 left-0 p-8">
+<span class="bg-surface-container-lowest px-4 py-2 text-[10px] uppercase tracking-widest font-label text-primary">Art</span>
+</div>
+</div>
+<h2 class="text-2xl font-headline font-bold text-primary mb-3">Tonal Excavations</h2>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">
+                    A series of 12 large-scale paintings documenting the physical degradation of industrial materials over time.
+                </p>
+</div>
+<!-- Project 03: Full Width Dossier Style -->
+<div class="md:col-span-12 grid md:grid-cols-12 gap-8 items-center bg-surface-container-low p-8 md:p-16 my-12">
+<div class="md:col-span-4 order-2 md:order-1">
+<span class="text-secondary font-label text-[10px] uppercase tracking-[0.3em] mb-4 block">Performance / 2023</span>
+<h2 class="text-4xl md:text-5xl font-headline font-bold text-primary mb-6 leading-tight">The Kinetic <br/>Monograph</h2>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed mb-8 border-l-2 border-outline-variant pl-6">
+                        "The kinetic monograph is not a dance; it is an interrogation of the body's mechanical limitations when confronted with digital surveillance."
+                    </p>
+<button class="bg-primary text-on-primary px-8 py-4 text-[10px] uppercase tracking-[0.2em] font-label hover:bg-primary-container transition-colors">Read Methodology</button>
+</div>
+<div class="md:col-span-8 order-1 md:order-2">
+<div class="relative overflow-hidden bg-surface-variant aspect-video">
+<img alt="" class="w-full h-full object-cover" data-alt="Dancer in motion blurred by slow shutter speed against a brutalist concrete background with harsh shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2GmqL_M9AIvZU-PXNEWYOcG5M6S0P9AbgO5fBNs34Bvsg2xNbKGVpt3Nm0efiJTUonuscfFy0pOGWIVrQn1ASle-XZo055fAcj_TXTUxrmHQFLD0C1iNFhcg6ipNKRf6r7bPzFEg2RjJfZro_9ITCDaTVUSnDLvvcVb9rL-jEUy1Zm_wXnmgjHMMtKSg2L0oNRbymYiDxTAcoktEX5wZAe_RrcD9FwsN1fBKohcZRGhDxuZ-OnfaIOCnGzRRiDHoSTeF7JL2Z0FTi"/>
+</div>
+</div>
+</div>
+<!-- Project 04: Two Column Grid -->
+<div class="md:col-span-6 group cursor-pointer">
+<div class="relative overflow-hidden bg-surface-variant aspect-[3/2] mb-8">
+<img alt="" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" data-alt="Abstract sculpture made of glass and steel reflecting geometric patterns in a bright museum gallery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQsl4R867iGGLLlXn2j3rnlj6tn1J9zJ6m3Uw-E4A8g5EjzvigWsOswKCRntfnepH9nvCgzvmqwLljGwkuCRDENm7He_ZG_ppZwqdVh7CaGnQ_i0TKvYxzhvBnSMLwfnTR7hXz4BzhEHWEuJ7Krbb8SWLsT5Q06Qom2EeuGg0a_FkVeGLIemV3CZyl9ncwkwU31lkfBf8wm97QESf-mFERhN4a1Sn_QJEJp7EopHkAI_vKARc7e8w-_IleqK9dQaui9Z-mOdjdfzzW"/>
+<div class="absolute bottom-0 right-0 p-8">
+<span class="bg-surface-container-lowest px-4 py-2 text-[10px] uppercase tracking-widest font-label text-primary">Art</span>
+</div>
+</div>
+<h2 class="text-2xl font-headline font-bold text-primary mb-3">Refractive Indices</h2>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">
+                    Light studies using recycled optical components to create immersive environments.
+                </p>
+</div>
+<div class="md:col-span-6 group cursor-pointer md:mt-24">
+<div class="relative overflow-hidden bg-surface-variant aspect-[3/2] mb-8">
+<img alt="" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out" data-alt="Black and white photograph of a woman standing behind a translucent curtain, soft diffused light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa33LnCW-1zJl7nVgivET5NVWrtvpeAJivlL6ixYdMdAkb5pelMhH7WHVU1zPPUPWDTBTXWr8h1pRXhbycqYAdoTQO3ndk5RmwZGgoqsCLxocHXAge3aVUs35Kb5Hr5hD66YSdvBT_5EeroH762nvMa2y-Aknz5qPzrK_uF42l3O1I52gJhlrl3-Dvh2Hw_VsbEZwzrwCXG9RrI6xZrmEk05zWjfI5SNgN_n5GGBTNeScIG14NkIl5yI_K_-jgffYzKG7dr5-_Hx_w"/>
+<div class="absolute bottom-0 right-0 p-8">
+<span class="bg-surface-container-lowest px-4 py-2 text-[10px] uppercase tracking-widest font-label text-primary">Directing</span>
+</div>
+</div>
+<h2 class="text-2xl font-headline font-bold text-primary mb-3">Limen</h2>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">
+                    A short film documenting the psychological transition between domestic and public identities.
+                </p>
+</div>
+</section>
+<!-- Pagination / CTA -->
+<div class="mt-32 text-center">
+<button class="group inline-flex flex-col items-center">
+<span class="font-label text-[10px] uppercase tracking-[0.4em] text-on-surface-variant mb-4 group-hover:text-primary transition-colors">Load More Archive</span>
+<span class="material-symbols-outlined text-primary text-4xl font-light">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full flex flex-col items-center justify-center space-y-12 px-8 bg-[#162825] py-24">
+<div class="flex flex-col md:flex-row gap-12 md:gap-24 items-center">
+<a class="font-['Inter'] text-xs uppercase tracking-[0.2em] leading-relaxed text-[#fcf9f8]/60 hover:text-[#fcf9f8] transition-all" href="#">Instagram</a>
+<a class="font-['Inter'] text-xs uppercase tracking-[0.2em] leading-relaxed text-[#fcf9f8]/60 hover:text-[#fcf9f8] transition-all" href="#">LinkedIn</a>
+<a class="font-['Inter'] text-xs uppercase tracking-[0.2em] leading-relaxed text-[#fcf9f8]/60 hover:text-[#fcf9f8] transition-all" href="#">Newsletter</a>
+</div>
+<div class="text-[#fcf9f8] font-['Inter'] text-xs uppercase tracking-[0.2em] leading-relaxed opacity-40">
+            © 2024 Alexis Rhee. All Rights Reserved.
+        </div>
+</footer>
+</body></html>
