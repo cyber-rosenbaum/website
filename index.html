@@ -1,142 +1,1296 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isometrische Pommesbude</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: #fdf6e3; font-family: 'Arial', sans-serif; }
-        #ui {
-            position: absolute;
-            bottom: 50px;
-            width: 100%;
-            text-align: center;
-            pointer-events: none;
-        }
-        .btn {
-            background: #e63946;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            border: none;
-            font-weight: bold;
-            font-size: 1.2rem;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        .btn:hover { transform: scale(1.1); background: #ffbe0b; }
-        canvas { display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Straße der Wunder</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Oswald:wght@300;400;600&display=swap');
+
+  :root {
+    --night: #0a0a0f;
+    --asphalt: #1a1a24;
+    --lamplight: #f5c842;
+    --neon-red: #e63946;
+    --neon-blue: #4cc9f0;
+    --cream: #f5e6c8;
+    --rust: #c45e2a;
+    --forest: #2d5a27;
+    --brass: #b8860b;
+    --fog: rgba(245,232,200,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--night);
+    font-family: 'Special Elite', cursive;
+    color: var(--cream);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--lamplight);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor.hover { transform: translate(-50%, -50%) scale(2.5); background: rgba(245,200,66,0.3); }
+
+  /* ========== LOADING SCREEN ========== */
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: var(--night);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease;
+  }
+  #loader.fade { opacity: 0; pointer-events: none; }
+
+  .loader-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-style: italic;
+    color: var(--lamplight);
+    text-shadow: 0 0 40px rgba(245,200,66,0.5);
+    animation: flicker 3s infinite;
+    text-align: center;
+    padding: 0 1rem;
+  }
+  .loader-sub {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.4em;
+    color: var(--cream);
+    opacity: 0.6;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
+  .loader-bar-wrap {
+    width: 280px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    margin-top: 3rem;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .loader-bar {
+    height: 100%;
+    background: var(--lamplight);
+    width: 0;
+    border-radius: 2px;
+    animation: loadbar 2s ease forwards;
+  }
+  .loader-pct {
+    font-size: 0.8rem;
+    color: var(--lamplight);
+    margin-top: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+
+  @keyframes loadbar { to { width: 100%; } }
+  @keyframes flicker {
+    0%,100% { opacity: 1; } 92% { opacity: 1; } 93% { opacity: 0.6; } 95% { opacity: 1; } 97% { opacity: 0.8; }
+  }
+
+  /* ========== MAIN SCENE ========== */
+  #scene {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1s ease 0.3s;
+  }
+  #scene.show { opacity: 1; }
+
+  /* Stars */
+  .stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 10%, white, transparent),
+      radial-gradient(1px 1px at 80% 5%, white, transparent),
+      radial-gradient(1.5px 1.5px at 50% 15%, rgba(255,255,200,0.8), transparent),
+      radial-gradient(1px 1px at 30% 20%, white, transparent),
+      radial-gradient(1px 1px at 70% 8%, white, transparent),
+      radial-gradient(1px 1px at 10% 30%, white, transparent),
+      radial-gradient(1px 1px at 90% 25%, white, transparent),
+      radial-gradient(1px 1px at 45% 7%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(2px 2px at 60% 3%, rgba(245,200,66,0.6), transparent);
+    pointer-events: none;
+  }
+
+  /* Ground / Pavement */
+  .ground {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, #2a2a35 0%, #1a1a22 60%, #111118 100%);
+    border-top: 2px solid #3a3a4a;
+  }
+  .pavement-lines {
+    position: absolute;
+    top: 8px; left: 0; right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, transparent 0, transparent 60px, rgba(255,255,255,0.04) 60px, rgba(255,255,255,0.04) 120px);
+  }
+
+  /* Street lamp posts */
+  .lamp {
+    position: absolute;
+    bottom: 218px;
+    width: 12px;
+  }
+  .lamp-post {
+    width: 6px;
+    background: linear-gradient(to right, #3a3a3a, #555, #3a3a3a);
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+  .lamp-head {
+    width: 30px;
+    height: 14px;
+    background: linear-gradient(180deg, #666 0%, #444 100%);
+    border-radius: 4px 4px 8px 8px;
+    margin-left: -12px;
+    position: relative;
+  }
+  .lamp-glow {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(245,200,66,0.4) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .lamp-cone {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-top: 80px solid rgba(245,200,66,0.04);
+    pointer-events: none;
+  }
+
+  /* ========== BUILDINGS ========== */
+  .street {
+    position: absolute;
+    bottom: 218px;
+    left: 0; right: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0;
+    padding: 0 5vw;
+  }
+
+  /* ---- POMMESBUDE ---- */
+  .pommes {
+    position: relative;
+    width: 260px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .pommes:hover { transform: translateY(-8px); }
+
+  .pommes-body {
+    width: 220px;
+    height: 180px;
+    background: linear-gradient(160deg, #d44a00 0%, #b03800 50%, #8a2800 100%);
+    border-radius: 8px 8px 0 0;
+    position: relative;
+    margin: 0 auto;
+    box-shadow: inset -20px 0 40px rgba(0,0,0,0.4), 4px 0 20px rgba(0,0,0,0.5);
+    border: 2px solid #ff6a20;
+    border-bottom: none;
+  }
+  .pommes-window {
+    position: absolute;
+    top: 30px; left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(255,240,200,0.9) 0%, rgba(255,220,150,0.8) 100%);
+    border: 3px solid #ff6a20;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255,150,0,0.4);
+  }
+  .pommes-window::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+  }
+  /* Fries illustration in window */
+  .pommes-art {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 100%;
+    gap: 3px;
+    padding: 10px 15px 0;
+  }
+  .fry {
+    background: linear-gradient(180deg, #f5c842 0%, #e0a800 100%);
+    border-radius: 2px 2px 0 0;
+    width: 8px;
+    animation: fryBob 2s ease-in-out infinite;
+  }
+  .fry:nth-child(1) { height: 55px; animation-delay: 0s; }
+  .fry:nth-child(2) { height: 70px; animation-delay: 0.2s; }
+  .fry:nth-child(3) { height: 60px; animation-delay: 0.4s; }
+  .fry:nth-child(4) { height: 75px; animation-delay: 0.1s; }
+  .fry:nth-child(5) { height: 50px; animation-delay: 0.3s; }
+  .cone {
+    width: 50px;
+    height: 30px;
+    background: linear-gradient(135deg, #e63946 40%, #c41e2a 100%);
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  @keyframes fryBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+
+  .pommes-sign {
+    position: absolute;
+    top: -50px; left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    text-align: center;
+  }
+  .pommes-sign-board {
+    background: linear-gradient(135deg, #f5c842, #e0a800);
+    color: #1a0a00;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 3px solid #b8860b;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    white-space: nowrap;
+  }
+  .pommes-sign-chain {
+    display: flex;
+    justify-content: space-around;
+    width: 60px;
+    margin: 0 auto;
+  }
+  .chain-link { width: 2px; height: 12px; background: #888; margin: 0 4px; }
+
+  .pommes-roof {
+    width: 240px;
+    height: 30px;
+    background: linear-gradient(180deg, #ff6a20 0%, #d44a00 100%);
+    border-radius: 6px 6px 0 0;
+    margin: 0 auto;
+    border: 2px solid #ff8a40;
+    border-bottom: none;
+    position: relative;
+  }
+  .pommes-roof::before {
+    content: '🍟';
+    position: absolute;
+    top: 4px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+  }
+  .pommes-base {
+    width: 230px;
+    height: 12px;
+    background: #6a2000;
+    margin: 0 auto;
+    border-radius: 0 0 4px 4px;
+  }
+  .pommes-steam {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+  }
+  .steam-puff {
+    width: 8px;
+    height: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    animation: steamRise 2s ease-in-out infinite;
+    filter: blur(2px);
+  }
+  .steam-puff:nth-child(2) { animation-delay: 0.5s; height: 28px; }
+  .steam-puff:nth-child(3) { animation-delay: 1s; height: 16px; }
+  @keyframes steamRise { 0%{transform:translateY(0) scaleX(1);opacity:0.6} 100%{transform:translateY(-20px) scaleX(1.5);opacity:0} }
+
+  .pommes-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lamplight);
+    opacity: 0.7;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ---- CABARET ---- */
+  .cabaret {
+    position: relative;
+    width: 340px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin: 0 20px;
+  }
+  .cabaret:hover { transform: translateY(-8px); }
+
+  .cabaret-body {
+    width: 300px;
+    height: 260px;
+    background: linear-gradient(160deg, #1a0a2e 0%, #110720 60%, #0a0518 100%);
+    border-radius: 8px 8px 0 0;
+    position: relative;
+    margin: 0 auto;
+    border: 2px solid #6a0572;
+    border-bottom: none;
+    box-shadow: inset -20px 0 40px rgba(0,0,0,0.5), 0 0 40px rgba(106,5,114,0.3);
+    overflow: hidden;
+  }
+
+  /* Neon glow effects on cabaret */
+  .cabaret-body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ff00ff, #ff6bff, #ff00ff, transparent);
+    box-shadow: 0 0 15px rgba(255,0,255,0.8);
+    animation: neonFlicker 4s infinite;
+  }
+  @keyframes neonFlicker {
+    0%,100%{opacity:1} 45%{opacity:1} 47%{opacity:0.3} 49%{opacity:1} 80%{opacity:1} 82%{opacity:0.5} 84%{opacity:1}
+  }
+
+  .cabaret-facade {
+    position: absolute;
+    inset: 20px 20px 0;
+  }
+
+  /* Big ornate entrance arch */
+  .cabaret-arch {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 160px;
+    background: linear-gradient(180deg, #0d0520 0%, #050210 100%);
+    border: 3px solid #9b00a8;
+    border-bottom: none;
+    border-radius: 65px 65px 0 0;
+    box-shadow: 0 0 25px rgba(155,0,168,0.5), inset 0 0 20px rgba(0,0,0,0.8);
+    overflow: visible;
+  }
+  .cabaret-arch::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: transparent;
+    border: 3px solid transparent;
+    box-shadow: 0 0 20px rgba(255,0,255,0.6);
+  }
+
+  /* Ticket booth / kasse */
+  .kasse {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 120px;
+    z-index: 2;
+  }
+  .kasse-box {
+    width: 80px;
+    height: 90px;
+    background: linear-gradient(160deg, #3d1a5c 0%, #1e0a2e 100%);
+    border: 2px solid #9b00a8;
+    border-radius: 4px 4px 0 0;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 0 20px rgba(155,0,168,0.4);
+  }
+  .kasse-window {
+    position: absolute;
+    top: 15px; left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 35px;
+    background: rgba(255,200,255,0.08);
+    border: 1px solid rgba(255,100,255,0.5);
+    border-radius: 2px;
+  }
+  .kasse-slot {
+    position: absolute;
+    bottom: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 34px;
+    height: 4px;
+    background: rgba(0,0,0,0.8);
+    border: 1px solid #6a0572;
+    border-radius: 2px;
+  }
+  .kasse-sign {
+    position: absolute;
+    top: -28px; left: 50%;
+    transform: translateX(-50%);
+    background: #9b00a8;
+    color: #ffccff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    padding: 3px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(155,0,168,0.8);
+    text-transform: uppercase;
+  }
+
+  /* Cabaret windows (upper) */
+  .cab-windows {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+  }
+  .cab-win {
+    width: 50px;
+    height: 70px;
+    border: 2px solid #6a0572;
+    border-radius: 25px 25px 0 0;
+    background: linear-gradient(180deg, rgba(255,100,255,0.15) 0%, rgba(100,0,150,0.1) 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255,0,255,0.2), inset 0 0 10px rgba(0,0,0,0.5);
+  }
+  .cab-win::before {
+    content: '';
+    position: absolute;
+    top: -10px; left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 80px;
+    background: rgba(255,150,255,0.05);
+    animation: cabLight 3s ease-in-out infinite;
+  }
+  @keyframes cabLight { 0%,100%{opacity:0.5;transform:translateX(-50%) rotate(0deg)} 50%{opacity:1;transform:translateX(-50%) rotate(3deg)} }
+
+  .cab-silhouette {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.6rem;
+    opacity: 0.6;
+    animation: dance 1.5s ease-in-out infinite;
+  }
+  @keyframes dance { 0%,100%{transform:translateX(-50%) rotate(-5deg)} 50%{transform:translateX(-50%) rotate(5deg)} }
+
+  /* Marquee / awning */
+  .cabaret-awning {
+    width: 320px;
+    height: 40px;
+    background: linear-gradient(180deg, #6a0572 0%, #4a0050 100%);
+    margin: 0 auto;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #9b00a8;
+    border-bottom: none;
+  }
+  .marquee-lights {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 5px 10px;
+  }
+  .bulb {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--lamplight);
+    box-shadow: 0 0 8px var(--lamplight);
+    animation: bulbFlash 1.5s linear infinite;
+  }
+  .bulb:nth-child(2n) { animation-delay: 0.75s; background: #ff6bff; box-shadow: 0 0 8px #ff6bff; }
+  .bulb:nth-child(3n) { animation-delay: 0.3s; background: #ff3333; box-shadow: 0 0 8px #ff3333; }
+  @keyframes bulbFlash { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .cabaret-name {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--lamplight);
+    text-shadow: 0 0 15px rgba(245,200,66,0.8), 0 0 30px rgba(245,200,66,0.4);
+    white-space: nowrap;
+    letter-spacing: 0.1em;
+  }
+
+  /* Vertical neon signs */
+  .neon-sign {
+    position: absolute;
+    writing-mode: vertical-rl;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    animation: neonFlicker 3s infinite;
+  }
+  .neon-sign.left {
+    left: 10px; top: 30px;
+    color: #ff6bff;
+    text-shadow: 0 0 10px #ff6bff, 0 0 20px #ff00ff;
+    animation-delay: 0.5s;
+  }
+  .neon-sign.right {
+    right: 10px; top: 30px;
+    color: #f5c842;
+    text-shadow: 0 0 10px #f5c842, 0 0 20px #ff9900;
+  }
+
+  .cabaret-base {
+    width: 310px;
+    height: 12px;
+    background: #3a0040;
+    margin: 0 auto;
+    border-radius: 0 0 4px 4px;
+  }
+  .cabaret-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ff6bff;
+    opacity: 0.7;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ---- FORSCHUNGSINSTITUT ---- */
+  .institut {
+    position: relative;
+    width: 280px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .institut:hover { transform: translateY(-8px); }
+
+  .inst-body {
+    width: 240px;
+    height: 310px;
+    background: linear-gradient(160deg, #1c2c1c 0%, #0e1a0e 60%, #080e08 100%);
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    margin: 0 auto;
+    border: 2px solid #2d5a27;
+    border-bottom: none;
+    box-shadow: inset -15px 0 30px rgba(0,0,0,0.5), 0 0 30px rgba(45,90,39,0.2);
+  }
+
+  /* Grid of institutional windows */
+  .inst-windows-grid {
+    position: absolute;
+    top: 20px; left: 15px; right: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .inst-win {
+    height: 45px;
+    border: 2px solid #2d5a27;
+    background: rgba(0,255,100,0.04);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .inst-win.lit {
+    background: rgba(50,200,80,0.12);
+    box-shadow: inset 0 0 10px rgba(50,200,80,0.2), 0 0 8px rgba(50,200,80,0.1);
+    animation: labPulse 4s ease-in-out infinite;
+  }
+  .inst-win.lit2 {
+    background: rgba(100,200,255,0.08);
+    box-shadow: inset 0 0 10px rgba(100,200,255,0.15);
+    animation: labPulse2 6s ease-in-out infinite;
+  }
+  .win-blinds {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 3px, transparent 3px, transparent 8px);
+  }
+  @keyframes labPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  @keyframes labPulse2 { 0%,100%{opacity:0.8} 30%{opacity:1} 70%{opacity:0.5} }
+
+  /* Institute entrance (formal columns) */
+  .inst-entrance {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .inst-pediment {
+    width: 140px;
+    height: 30px;
+    background: linear-gradient(180deg, #2d5a27 0%, #1a3a15 100%);
+    clip-path: polygon(5% 100%, 50% 0%, 95% 100%);
+    margin-bottom: -2px;
+  }
+  .inst-columns {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+  }
+  .col {
+    width: 18px;
+    background: linear-gradient(to right, #2d5a27, #3a7a33, #2d5a27);
+    border-radius: 2px 2px 0 0;
+  }
+  .col:nth-child(1), .col:nth-child(3) { height: 80px; }
+  .col:nth-child(2) { height: 80px; }
+  .inst-door {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 60px;
+    background: #0a0a0a;
+    border: 2px solid #2d5a27;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+  }
+  .inst-door-detail {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(45,90,39,0.6);
+  }
+
+  /* Sign plate */
+  .inst-plaque {
+    position: absolute;
+    top: -52px; left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    text-align: center;
+  }
+  .plaque-board {
+    background: linear-gradient(135deg, #2d3d2d, #1a2a1a);
+    border: 2px solid #2d5a27;
+    border-radius: 3px;
+    padding: 5px 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(50,200,80,0.1);
+  }
+  .plaque-top {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #5a9a55;
+    margin-bottom: 2px;
+  }
+  .plaque-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    color: #8aba83;
+    letter-spacing: 0.05em;
+  }
+
+  .inst-roof {
+    width: 260px;
+    height: 20px;
+    background: linear-gradient(180deg, #2d5a27 0%, #1a3a15 100%);
+    margin: 0 auto;
+    border-radius: 4px 4px 0 0;
+    border: 2px solid #3a7a33;
+    border-bottom: none;
+  }
+  .inst-base {
+    width: 250px;
+    height: 14px;
+    background: #0a180a;
+    margin: 0 auto;
+    border-radius: 0 0 4px 4px;
+  }
+  .inst-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #5a9a55;
+    opacity: 0.7;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* Antenna on institute */
+  .antenna {
+    position: absolute;
+    top: -40px;
+    right: 40px;
+    width: 3px;
+    height: 40px;
+    background: #4a6a4a;
+  }
+  .antenna::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #e63946;
+    box-shadow: 0 0 8px #e63946;
+    animation: blink 2s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+  /* ========== OVERLAY PANELS ========== */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(4px);
+    padding: 1rem;
+  }
+  .overlay.active { opacity: 1; pointer-events: all; }
+
+  .panel {
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    animation: panelIn 0.4s ease;
+  }
+  @keyframes panelIn { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+  .panel-close {
+    position: absolute;
+    top: -40px; right: 0;
+    background: none;
+    border: 1px solid currentColor;
+    color: var(--cream);
+    padding: 4px 14px;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 2px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .panel-close:hover { opacity: 1; }
+
+  /* Pommes panel */
+  #panel-pommes { --accent: var(--rust); }
+  #panel-pommes .panel-inner {
+    border: 2px solid #d44a00;
+    background: linear-gradient(160deg, #1a0800 0%, #100500 100%);
+    padding: 2.5rem;
+    border-radius: 6px;
+    box-shadow: 0 0 60px rgba(212,74,0,0.2);
+  }
+  #panel-cabaret .panel-inner {
+    border: 2px solid #9b00a8;
+    background: linear-gradient(160deg, #0d0520 0%, #050210 100%);
+    padding: 2.5rem;
+    border-radius: 6px;
+    box-shadow: 0 0 60px rgba(155,0,168,0.3);
+  }
+  #panel-institut .panel-inner {
+    border: 2px solid #2d5a27;
+    background: linear-gradient(160deg, #060e06 0%, #030803 100%);
+    padding: 2.5rem;
+    border-radius: 6px;
+    box-shadow: 0 0 60px rgba(45,90,39,0.2);
+  }
+
+  .panel-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .panel-eyebrow {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+  }
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    line-height: 1.2;
+  }
+  #panel-pommes .panel-title { color: #ff8a40; text-shadow: 0 0 20px rgba(255,138,64,0.4); }
+  #panel-cabaret .panel-title { color: #ff6bff; text-shadow: 0 0 20px rgba(255,107,255,0.5); }
+  #panel-institut .panel-title { color: #8aba83; text-shadow: 0 0 20px rgba(138,186,131,0.4); }
+
+  .panel-divider {
+    width: 60px; height: 2px;
+    margin-bottom: 1.5rem;
+  }
+  #panel-pommes .panel-divider { background: linear-gradient(90deg, #d44a00, transparent); }
+  #panel-cabaret .panel-divider { background: linear-gradient(90deg, #9b00a8, transparent); }
+  #panel-institut .panel-divider { background: linear-gradient(90deg, #2d5a27, transparent); }
+
+  .panel-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    opacity: 0.85;
+    margin-bottom: 1.5rem;
+  }
+  .panel-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    opacity: 0.8;
+  }
+  #panel-pommes .tag { border: 1px solid #d44a00; color: #ff8a40; }
+  #panel-cabaret .tag { border: 1px solid #9b00a8; color: #ff6bff; }
+  #panel-institut .tag { border: 1px solid #2d5a27; color: #8aba83; }
+
+  /* ========== STREET ELEMENTS ========== */
+  .street-sign {
+    position: absolute;
+    top: 40px; left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+  }
+  .street-sign-board {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.5rem, 4vw, 2.8rem);
+    color: var(--lamplight);
+    text-shadow: 0 0 30px rgba(245,200,66,0.6), 0 0 60px rgba(245,200,66,0.2);
+    animation: flicker 5s infinite 1s;
+    white-space: nowrap;
+  }
+  .street-sign-sub {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.45;
+    margin-top: 0.3rem;
+  }
+
+  /* Fog layer */
+  .fog {
+    position: absolute;
+    bottom: 200px;
+    left: 0; right: 0;
+    height: 100px;
+    background: linear-gradient(to top, rgba(20,15,35,0.4) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Bottom hint */
+  .hint {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.3;
+    animation: hintFade 3s ease-in-out infinite;
+    z-index: 10;
+    white-space: nowrap;
+  }
+  @keyframes hintFade { 0%,100%{opacity:0.3} 50%{opacity:0.6} }
+
+  /* Ambient particles */
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: rgba(245,200,66,0.4);
+    animation: drift linear infinite;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translateY(0) translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 0.5; }
+    to { transform: translateY(-200px) translateX(20px); opacity: 0; }
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 900px) {
+    .street { flex-direction: column; align-items: center; gap: 20px; padding-bottom: 20px; }
+    .cabaret { margin: 0; }
+    #scene { min-height: auto; }
+    .street-sign { position: relative; top: auto; left: auto; transform: none; margin: 2rem auto 1rem; }
+    .ground { height: 100px; }
+    .fog { bottom: 80px; }
+  }
+</style>
 </head>
 <body>
 
-    <div id="ui">
-        <h1 style="color: #e63946; text-transform: uppercase; letter-spacing: 5px;">Fritten-Fritz 3D</h1>
-        <button class="btn" onclick="order()">EINE PORTION BITTE!</button>
+<div class="cursor" id="cursor"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-title">Die Straße<br>der Wunder</div>
+  <div class="loader-sub">Wird erleuchtet...</div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+  <div class="loader-pct" id="loaderPct">0%</div>
+</div>
+
+<!-- MAIN SCENE -->
+<div id="scene">
+  <div class="stars"></div>
+
+  <!-- Street sign / headline -->
+  <div class="street-sign">
+    <div class="street-sign-board">Die Straße der Wunder</div>
+    <div class="street-sign-sub">Klicke auf ein Gebäude um mehr zu erfahren</div>
+  </div>
+
+  <!-- Lamp posts -->
+  <div class="lamp" style="left: 8%;">
+    <div class="lamp-post" style="height:120px"></div>
+    <div class="lamp-head"></div>
+    <div class="lamp-glow"></div>
+    <div class="lamp-cone"></div>
+  </div>
+  <div class="lamp" style="right: 8%;">
+    <div class="lamp-post" style="height:120px"></div>
+    <div class="lamp-head"></div>
+    <div class="lamp-glow"></div>
+    <div class="lamp-cone"></div>
+  </div>
+
+  <!-- Buildings -->
+  <div class="street">
+
+    <!-- POMMESBUDE -->
+    <div class="pommes" id="btn-pommes" title="Pommesbude betreten">
+      <div class="pommes-steam">
+        <div class="steam-puff"></div>
+        <div class="steam-puff"></div>
+        <div class="steam-puff"></div>
+      </div>
+      <div class="pommes-sign">
+        <div class="pommes-sign-board">Knusprig & Knackig</div>
+        <div class="pommes-sign-chain"><span class="chain-link"></span><span class="chain-link"></span><span class="chain-link"></span></div>
+      </div>
+      <div class="pommes-roof"></div>
+      <div class="pommes-body">
+        <div class="pommes-window">
+          <div class="pommes-art">
+            <div class="fry"></div>
+            <div class="fry"></div>
+            <div class="fry"></div>
+            <div class="fry"></div>
+            <div class="fry"></div>
+          </div>
+          <div class="cone"></div>
+        </div>
+      </div>
+      <div class="pommes-base"></div>
+      <div class="pommes-label">Pommesbude No. 1</div>
     </div>
 
-    <script type="importmap">
-        {
-          "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-          }
-        }
-    </script>
+    <!-- CABARET -->
+    <div class="cabaret" id="btn-cabaret" title="Cabaret betreten">
+      <div class="cabaret-awning">
+        <div class="marquee-lights">
+          <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+          <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+          <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+          <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+        </div>
+        <div class="cabaret-name">Le Palais Nocturne</div>
+      </div>
+      <div class="cabaret-body">
+        <div class="neon-sign left">Varieté</div>
+        <div class="neon-sign right">Spektakel</div>
+        <div class="cab-windows">
+          <div class="cab-win lit">
+            <div class="win-blinds"></div>
+            <div class="cab-silhouette">💃</div>
+          </div>
+          <div class="cab-win">
+            <div class="win-blinds"></div>
+          </div>
+          <div class="cab-win lit2">
+            <div class="win-blinds"></div>
+            <div class="cab-silhouette" style="animation-delay:0.5s">🎭</div>
+          </div>
+          <div class="cab-win lit">
+            <div class="win-blinds"></div>
+          </div>
+        </div>
+        <div class="cabaret-arch">
+          <div class="kasse">
+            <div class="kasse-sign">✦ Kasse ✦</div>
+            <div class="kasse-box">
+              <div class="kasse-window"></div>
+              <div class="kasse-slot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cabaret-base"></div>
+      <div class="cabaret-label">Le Palais Nocturne — Cabaret & Varieté</div>
+    </div>
 
-    <script type="module">
-        import * as THREE from 'three';
+    <!-- FORSCHUNGSINSTITUT -->
+    <div class="institut" id="btn-institut" title="Institut betreten">
+      <div class="inst-plaque">
+        <div class="plaque-board">
+          <div class="plaque-top">Gegründet 1923</div>
+          <div class="plaque-main">Institut für Merkwürdige Wissenschaften</div>
+        </div>
+      </div>
+      <div class="inst-roof"></div>
+      <div class="inst-body">
+        <div class="antenna"></div>
+        <div class="inst-windows-grid">
+          <div class="inst-win lit"><div class="win-blinds"></div></div>
+          <div class="inst-win"><div class="win-blinds"></div></div>
+          <div class="inst-win lit2"><div class="win-blinds"></div></div>
+          <div class="inst-win lit2"><div class="win-blinds"></div></div>
+          <div class="inst-win lit"><div class="win-blinds"></div></div>
+          <div class="inst-win"><div class="win-blinds"></div></div>
+          <div class="inst-win"><div class="win-blinds"></div></div>
+          <div class="inst-win lit"><div class="win-blinds"></div></div>
+          <div class="inst-win lit2"><div class="win-blinds"></div></div>
+        </div>
+        <div class="inst-entrance">
+          <div class="inst-pediment"></div>
+          <div class="inst-columns">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+          <div class="inst-door">
+            <div class="inst-door-detail"></div>
+          </div>
+        </div>
+      </div>
+      <div class="inst-base"></div>
+      <div class="inst-label">Institut für Merkwürdige Wissenschaften</div>
+    </div>
 
-        // --- Setup ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xfdf6e3);
+  </div>
 
-        // Isometrische Kamera
-        const aspect = window.innerWidth / window.innerHeight;
-        const d = 5;
-        const camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
-        
-        // Positionierung für den typischen Jesse-Zhou-Winkel
-        camera.position.set(10, 10, 10);
-        camera.lookAt(0, 0, 0);
+  <div class="fog"></div>
+  <div class="ground"><div class="pavement-lines"></div></div>
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        document.body.appendChild(renderer.domElement);
+  <div class="hint">↑ Klicke auf ein Gebäude</div>
+</div>
 
-        // --- Licht ---
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-        scene.add(ambientLight);
+<!-- OVERLAYS -->
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 10, 7.5);
-        dirLight.castShadow = true;
-        scene.add(dirLight);
+<!-- Pommesbude Panel -->
+<div class="overlay" id="panel-pommes">
+  <div class="panel">
+    <button class="panel-close" onclick="closePanel('panel-pommes')">✕ Schließen</button>
+    <div class="panel-inner">
+      <div class="panel-icon">🍟</div>
+      <div class="panel-eyebrow">Seit 1987 · Frisch frittiert</div>
+      <div class="panel-title">Knusprig &amp; Knackig</div>
+      <div class="panel-divider"></div>
+      <div class="panel-text">
+        Die beste Pommesbude der Stadt — und das seit Generationen. 
+        Wir frittieren mit Liebe, servieren mit Stolz, und streuen Salz mit einer 
+        Großzügigkeit, die man nur selten findet. Unsere Pommes kommen in drei Größen: 
+        groß, größer, und „du meine Güte". Dazu Currywurst, Bratwurst, 
+        und selbstgemachte Soßen nach Omas Geheimrezept.
+      </div>
+      <div class="panel-tags">
+        <span class="tag">Frischöl täglich</span>
+        <span class="tag">Hausgemachte Soßen</span>
+        <span class="tag">Currywurst</span>
+        <span class="tag">Seit 1987</span>
+        <span class="tag">Kein Schnickschnack</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-        // --- Die Bude (Meshes) ---
-        const group = new THREE.Group();
+<!-- Cabaret Panel -->
+<div class="overlay" id="panel-cabaret">
+  <div class="panel">
+    <button class="panel-close" onclick="closePanel('panel-cabaret')">✕ Schließen</button>
+    <div class="panel-inner">
+      <div class="panel-icon">🎭</div>
+      <div class="panel-eyebrow">Einlass ab 21 Uhr · Kasse öffnet 20:30</div>
+      <div class="panel-title">Le Palais Nocturne</div>
+      <div class="panel-divider"></div>
+      <div class="panel-text">
+        Hinter der alten Kassenhätte, wo Madame Eloise seit 40 Jahren sitzt und 
+        Eintrittskarten mit zitternder Eleganz abreißt, beginnt eine andere Welt. 
+        Das Palais Nocturne ist Varieté, Spektakel, Geheimnis. Tänzerinnen im Federkleid, 
+        Zauberer ohne Moral, Sänger mit gebrochenen Herzen — jeden Donnerstag bis Sonntag, 
+        immer ausverkauft, nie langweilig.
+      </div>
+      <div class="panel-tags">
+        <span class="tag">Varieté</span>
+        <span class="tag">Live-Musik</span>
+        <span class="tag">Do–So ab 21h</span>
+        <span class="tag">Kasse: 20:30</span>
+        <span class="tag">Reservierung empfohlen</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-        // Hauptgebäude
-        const shopGeo = new THREE.BoxGeometry(4, 3, 3);
-        const shopMat = new THREE.MeshStandardMaterial({ color: 0xe63946 }); // Ketchup Rot
-        const shop = new THREE.Mesh(shopGeo, shopMat);
-        shop.castShadow = true;
-        group.add(shop);
+<!-- Institut Panel -->
+<div class="overlay" id="panel-institut">
+  <div class="panel">
+    <button class="panel-close" onclick="closePanel('panel-institut')">✕ Schließen</button>
+    <div class="panel-inner">
+      <div class="panel-icon">🔬</div>
+      <div class="panel-eyebrow">Gegründet 1923 · Zutritt für alle</div>
+      <div class="panel-title">Institut für Merkwürdige Wissenschaften</div>
+      <div class="panel-divider"></div>
+      <div class="panel-text">
+        Was genau hier geforscht wird, wissen nur die Forscher — und auch die 
+        scheinen sich nicht ganz einig zu sein. Im dritten Stock riecht es nach Ozon, 
+        im zweiten nach alten Büchern und im Keller nach Möglichkeiten. 
+        Das Institut nimmt Gäste, Fragen und gelegentlich auch Antworten entgegen. 
+        Besucher sind willkommen, solange sie klopfen.
+      </div>
+      <div class="panel-tags">
+        <span class="tag">Merkwürdige Phänomene</span>
+        <span class="tag">Offene Forschung</span>
+        <span class="tag">Archiv zugänglich</span>
+        <span class="tag">Mo–Fr 9–18h</span>
+        <span class="tag">Klopfen erwünscht</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-        // Dach (Flach)
-        const roofGeo = new THREE.BoxGeometry(4.5, 0.2, 3.5);
-        const roofMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.y = 1.6;
-        group.add(roof);
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('button, .pommes, .cabaret, .institut').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
 
-        // Fenster / Verkaufstresen
-        const windowGeo = new THREE.BoxGeometry(2.5, 1.2, 0.1);
-        const windowMat = new THREE.MeshStandardMaterial({ color: 0xa8dadc });
-        const win = new THREE.Mesh(windowGeo, windowMat);
-        win.position.set(0, 0.2, 1.51);
-        group.add(win);
+  // Loader
+  let pct = 0;
+  const pctEl = document.getElementById('loaderPct');
+  const interval = setInterval(() => {
+    pct += Math.floor(Math.random() * 12) + 3;
+    if (pct >= 100) { pct = 100; clearInterval(interval); finishLoad(); }
+    pctEl.textContent = pct + '%';
+  }, 120);
 
-        // Bodenplatte
-        const floorGeo = new THREE.PlaneGeometry(20, 20);
-        const floorMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
-        const floor = new THREE.Mesh(floorGeo, floorMat);
-        floor.rotation.x = -Math.PI / 2;
-        floor.position.y = -1.5;
-        floor.receiveShadow = true;
-        scene.add(floor);
+  function finishLoad() {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('fade');
+      document.getElementById('scene').classList.add('show');
+      setTimeout(() => document.getElementById('loader').remove(), 900);
+    }, 400);
+  }
 
-        scene.add(group);
+  // Panels
+  document.getElementById('btn-pommes').addEventListener('click', () => openPanel('panel-pommes'));
+  document.getElementById('btn-cabaret').addEventListener('click', () => openPanel('panel-cabaret'));
+  document.getElementById('btn-institut').addEventListener('click', () => openPanel('panel-institut'));
 
-        // --- Animation ---
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Sanfte Drehung bei Mausbewegung (optional)
-            group.rotation.y += 0.002;
-            
-            renderer.render(scene, camera);
-        }
+  function openPanel(id) {
+    document.getElementById(id).classList.add('active');
+  }
+  function closePanel(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('active'); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
+  });
 
-        window.addEventListener('resize', () => {
-            const aspect = window.innerWidth / window.innerHeight;
-            camera.left = -d * aspect;
-            camera.right = d * aspect;
-            camera.top = d;
-            camera.bottom = -d;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        animate();
-
-        // UI Logik
-        window.order = () => {
-            alert("🍟 Kommt sofort! Isometrisch serviert.");
-        };
-    </script>
+  // Ambient particles
+  function spawnParticle() {
+    const scene = document.getElementById('scene');
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.bottom = '200px';
+    p.style.animationDuration = (4 + Math.random() * 6) + 's';
+    p.style.animationDelay = Math.random() * 2 + 's';
+    p.style.opacity = Math.random() * 0.5;
+    scene.appendChild(p);
+    setTimeout(() => p.remove(), 10000);
+  }
+  setInterval(spawnParticle, 800);
+</script>
 </body>
 </html>
 
