@@ -1,63 +1,110 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pommesbude №1</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Special+Elite&display=swap');
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html, body { width:100%; height:100%; background:#1a1016; overflow:hidden; }
-        #c { display:block; width:100vw; height:100vh; cursor:grab; }
-        #c:active { cursor:grabbing; }
-        #ui { position:fixed; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:2rem 2rem 1.5rem; }
-        #headline { text-align:center; animation: rise 1.2s cubic-bezier(.16,1,.3,1) 0.4s both; }
-        #headline h1 { font-family:'Cabin Sketch', cursive; font-size: clamp(2rem, 5vw, 3.5rem); color: #f5e6c8; letter-spacing: 0.04em; text-shadow: 3px 3px 0px #c45e2a, 6px 6px 0px rgba(0,0,0,0.3); line-height: 1; }
-        #headline p { font-family:'Special Elite', cursive; font-size:0.75rem; letter-spacing:0.3em; color:rgba(245,230,200,0.45); text-transform:uppercase; margin-top:0.5rem; }
-        #bottom { display:flex; flex-direction:column; align-items:center; gap:0.5rem; animation: rise 1s ease 2s both; }
-        #hint { font-family:'Special Elite', cursive; font-size:0.65rem; letter-spacing:0.35em; text-transform:uppercase; color:rgba(245,230,200,0.3); animation: breathe 3s ease-in-out infinite 3s; }
-        #tagline { font-family:'Special Elite', cursive; font-size:0.8rem; color:rgba(245,200,100,0.5); letter-spacing:0.12em; font-style:italic; }
-        @keyframes rise { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes breathe { 0%,100%{opacity:.3} 50%{opacity:.55} }
-        #loader { position:fixed; inset:0; background:#1a1016; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; transition:opacity 0.8s ease; }
-        #loader.done { opacity:0; pointer-events:none; }
-        #loader-text { font-family:'Cabin Sketch',cursive; font-size:2rem; color:#f5c842; text-shadow:2px 2px 0 #c45e2a; margin-bottom:1.5rem; }
-        #loader-bar-wrap { width:200px; height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
-        #loader-bar { height:100%; background:#f5c842; width:0; transition:width 0.1s linear; border-radius:4px; }
-        #loader-pct { font-family:'Special Elite',cursive; font-size:0.7rem; color:rgba(245,200,66,0.6); margin-top:0.8rem; letter-spacing:0.2em; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pommesbude №1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Special+Elite&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; background:#1a1016; overflow:hidden; }
+  #c { display:block; width:100vw; height:100vh; cursor:grab; }
+  #c:active { cursor:grabbing; }
+
+  #ui {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    pointer-events:none; z-index:10;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:space-between;
+    padding:2rem 2rem 1.5rem;
+  }
+  #headline {
+    text-align:center;
+    animation: rise 1.2s cubic-bezier(.16,1,.3,1) 0.4s both;
+  }
+  #headline h1 {
+    font-family:'Cabin Sketch', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #f5e6c8;
+    letter-spacing: 0.04em;
+    text-shadow: 3px 3px 0px #c45e2a, 6px 6px 0px rgba(0,0,0,0.3);
+    line-height: 1;
+  }
+  #headline p {
+    font-family:'Special Elite', cursive;
+    font-size:0.75rem; letter-spacing:0.3em;
+    color:rgba(245,230,200,0.45);
+    text-transform:uppercase; margin-top:0.5rem;
+  }
+  #bottom {
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+    animation: rise 1s ease 2s both;
+  }
+  #hint {
+    font-family:'Special Elite', cursive;
+    font-size:0.65rem; letter-spacing:0.35em;
+    text-transform:uppercase; color:rgba(245,230,200,0.3);
+    animation: breathe 3s ease-in-out infinite 3s;
+  }
+  #tagline {
+    font-family:'Special Elite', cursive;
+    font-size:0.8rem; color:rgba(245,200,100,0.5);
+    letter-spacing:0.12em; font-style:italic;
+  }
+
+  @keyframes rise { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes breathe { 0%,100%{opacity:.3} 50%{opacity:.55} }
+
+  /* Loading screen */
+  #loader {
+    position:fixed; inset:0; background:#1a1016;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    z-index:100; transition:opacity 0.8s ease;
+  }
+  #loader.done { opacity:0; pointer-events:none; }
+  #loader-text {
+    font-family:'Cabin Sketch',cursive; font-size:2rem;
+    color:#f5c842; text-shadow:2px 2px 0 #c45e2a;
+    margin-bottom:1.5rem;
+  }
+  #loader-bar-wrap { width:200px; height:4px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
+  #loader-bar { height:100%; background:#f5c842; width:0; transition:width 0.1s linear; border-radius:4px; }
+  #loader-pct { font-family:'Special Elite',cursive; font-size:0.7rem; color:rgba(245,200,66,0.6); margin-top:0.8rem; letter-spacing:0.2em; }
+</style>
 </head>
 <body>
-    <div id="loader">
-        <div id="loader-text">Pommes werden frittiert…</div>
-        <div id="loader-bar-wrap"><div id="loader-bar"></div></div>
-        <div id="loader-pct">0%</div>
-    </div>
-    <canvas id="c"></canvas>
-    <div id="ui">
-        <div id="headline">
-            <h1>Pommesbude №1</h1>
-            <p>Frisch · Knusprig · Unschlagbar</p>
-        </div>
-        <div id="bottom">
-            <div id="tagline">✦ Hausgemachte Soßen · Seit 1987 ✦</div>
-            <div id="hint">Ziehen zum drehen &nbsp;·&nbsp; Scroll zum zoomen</div>
-        </div>
-    </div>
+
+<div id="loader">
+  <div id="loader-text">Pommes werden frittiert…</div>
+  <div id="loader-bar-wrap"><div id="loader-bar"></div></div>
+  <div id="loader-pct">0%</div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div id="headline">
+    <h1>Pommesbude №1</h1>
+    <p>Frisch · Knusprig · Unschlagbar</p>
+  </div>
+  <div id="bottom">
+    <div id="tagline">✦ Hausgemachte Soßen · Seit 1987 ✦</div>
+    <div id="hint">Ziehen zum drehen &nbsp;·&nbsp; Scroll zum zoomen</div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// --- INITIALISIERUNG ---
+// ─────────────────────────────────────────────────────
+//  RENDERER
+// ─────────────────────────────────────────────────────
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-// WICHTIG: Korrektur für Farbraum
-if (renderer.outputEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
-
+renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
 
@@ -65,159 +112,521 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1016);
 scene.fog = new THREE.Fog(0x1a1016, 18, 32);
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
-let autoRotate = true; // Nach oben verschoben
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
+camera.position.set(4.5, 4, 8);
+camera.lookAt(0, 1.5, 0);
 
-// --- KAMERA STEUERUNG ---
+// ─────────────────────────────────────────────────────
+//  ORBIT CONTROLS
+// ─────────────────────────────────────────────────────
 let drag = false, px = 0, py = 0;
 let theta = 0.3, phi = 1.1, radius = 10;
 const lookAt = new THREE.Vector3(0, 1.5, 0);
 
 function updateCamera() {
-    camera.position.set(
-        lookAt.x + radius * Math.sin(phi) * Math.sin(theta),
-        lookAt.y + radius * Math.cos(phi),
-        lookAt.z + radius * Math.sin(phi) * Math.cos(theta)
-    );
-    camera.lookAt(lookAt);
+  camera.position.set(
+    lookAt.x + radius * Math.sin(phi) * Math.sin(theta),
+    lookAt.y + radius * Math.cos(phi),
+    lookAt.z + radius * Math.sin(phi) * Math.cos(theta)
+  );
+  camera.lookAt(lookAt);
 }
 
-canvas.addEventListener('mousedown', e => { drag=true; px=e.clientX; py=e.clientY; autoRotate=false; });
+canvas.addEventListener('mousedown',  e => { drag=true; px=e.clientX; py=e.clientY; autoRotate=false; });
 canvas.addEventListener('touchstart', e => { drag=true; px=e.touches[0].clientX; py=e.touches[0].clientY; autoRotate=false; });
-window.addEventListener('mouseup', () => drag=false);
-window.addEventListener('touchend', () => drag=false);
+window.addEventListener('mouseup',   () => drag=false);
+window.addEventListener('touchend',  () => drag=false);
 window.addEventListener('mousemove', e => {
-    if (!drag) return;
-    theta -= (e.clientX-px)*0.006;
-    phi = Math.max(0.4, Math.min(1.35, phi + (e.clientY-py)*0.005));
-    px=e.clientX; py=e.clientY;
+  if (!drag) return;
+  theta -= (e.clientX-px)*0.006; phi = Math.max(0.4,Math.min(1.35,phi+(e.clientY-py)*0.005));
+  px=e.clientX; py=e.clientY;
 });
 window.addEventListener('touchmove', e => {
-    if (!drag) return;
-    theta -= (e.touches[0].clientX-px)*0.006;
-    phi = Math.max(0.4, Math.min(1.35, phi + (e.touches[0].clientY-py)*0.005));
-    px=e.touches[0].clientX; py=e.touches[0].clientY;
+  if (!drag) return;
+  theta -= (e.touches[0].clientX-px)*0.006;
+  phi = Math.max(0.4,Math.min(1.35,phi+(e.touches[0].clientY-py)*0.005));
+  px=e.touches[0].clientX; py=e.touches[0].clientY;
 });
-canvas.addEventListener('wheel', e => {
-    radius = Math.max(5, Math.min(18, radius + e.deltaY * 0.015));
-    e.preventDefault();
-}, {passive: false});
+canvas.addEventListener('wheel', e => { radius = Math.max(5,Math.min(18,radius+e.deltaY*0.015)); });
+let autoRotate = true;
 
-// --- MATERIAL HELFER ---
-function m(color, opts={}) { return new THREE.MeshLambertMaterial({ color: new THREE.Color(color), ...opts }); }
+// ─────────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────────
+function m(color, opts={}) {
+  return new THREE.MeshLambertMaterial({
+    color: new THREE.Color(color),
+    ...opts
+  });
+}
 function box(w,h,d) { return new THREE.BoxGeometry(w,h,d); }
-function mesh(geo, mat) { 
-    const o = new THREE.Mesh(geo, mat); 
-    o.castShadow = true; o.receiveShadow = true; 
-    return o; 
-}
-function add(parent, geo, mat, x, y, z, rx=0, ry=0, rz=0) {
-    const o = mesh(geo, mat);
-    o.position.set(x,y,z);
-    o.rotation.set(rx,ry,rz);
-    parent.add(o);
-    return o;
+
+function mesh(geo, mat) {
+  const o = new THREE.Mesh(geo, mat);
+  o.castShadow = true; o.receiveShadow = true;
+  return o;
 }
 
+function add(parent, geo, mat, x, y, z, rx=0, ry=0, rz=0) {
+  const o = mesh(geo, mat);
+  o.position.set(x,y,z);
+  o.rotation.set(rx,ry,rz);
+  parent.add(o);
+  return o;
+}
+
+// ─────────────────────────────────────────────────────
+//  COLOUR PALETTE  (warm, lo-fi, hand-painted feel)
+// ─────────────────────────────────────────────────────
 const C = {
-    wall: m(0xe8c88a), wall2: m(0xd4a96a), red: m(0xc0392b), redDark: m(0x8b1a10),
-    yellow: m(0xf5c842), orange: m(0xe8762a), tan: m(0xc8956a), tanDark: m(0x8a5c34),
-    dark: m(0x1a1016), grey: m(0x7a7068), greyLt: m(0xb0a898), white: m(0xf0ece0),
-    green: m(0x4a8a3a), ground: m(0x2e2828), ground2: m(0x3a3430), skyBlue: m(0x5ab8d8),
-    bulbOn: m(0xffeebb, {emissive: new THREE.Color(0xffcc44), emissiveIntensity:1.8}),
-    glassW: m(0xc8e8f8, {transparent:true, opacity:0.35}),
-    neon: m(0xff4422, {emissive: new THREE.Color(0xff4422), emissiveIntensity:2.0}),
-    neon2: m(0xffcc00, {emissive: new THREE.Color(0xffcc00), emissiveIntensity:2.0}),
-    awningStripe: m(0xf0ece0),
+  wall:    m(0xe8c88a),       // warm cream/ochre – main stucco
+  wall2:   m(0xd4a96a),       // darker stucco
+  red:     m(0xc0392b),       // awning / sign red
+  redDark: m(0x8b1a10),       // darker red
+  yellow:  m(0xf5c842),       // sign yellow / mustard
+  orange:  m(0xe8762a),       // fry colour
+  tan:     m(0xc8956a),       // wood / counter
+  tanDark: m(0x8a5c34),       // darker wood
+  dark:    m(0x1a1016),       // black
+  grey:    m(0x7a7068),       // metal / pavement
+  greyLt:  m(0xb0a898),       // light grey
+  white:   m(0xf0ece0),       // sign white
+  green:   m(0x4a8a3a),       // plant
+  greenLt: m(0x78b848),
+  ground:  m(0x2e2828),       // pavement dark
+  ground2: m(0x3a3430),       // pavement seam
+  skyBlue: m(0x5ab8d8),       // menu board bg
+  menuTxt: m(0xf0ece0, {emissive: new THREE.Color(0xf0ece0), emissiveIntensity:0.2}),
+  bulbOn:  m(0xffeebb, {emissive: new THREE.Color(0xffcc44), emissiveIntensity:1.8}),
+  glassW:  m(0xc8e8f8, {transparent:true, opacity:0.35}),
+  neon:    m(0xff6644, {emissive: new THREE.Color(0xff4422), emissiveIntensity:2.0}),
+  neon2:   m(0xffee44, {emissive: new THREE.Color(0xffcc00), emissiveIntensity:2.0}),
+  awningStripe: m(0xf0ece0),
 };
 
+// ─────────────────────────────────────────────────────
+//  SCENE ROOT
+// ─────────────────────────────────────────────────────
 const root = new THREE.Group();
 scene.add(root);
 
-// BODEN
+// ─────────────────────────────────────────────────────
+//  GROUND / PAVEMENT
+// ─────────────────────────────────────────────────────
 const gnd = mesh(new THREE.PlaneGeometry(20, 20), C.ground);
-gnd.rotation.x = -Math.PI/2;
+gnd.rotation.x = -Math.PI/2; gnd.position.y = 0; gnd.receiveShadow = true; gnd.castShadow = false;
 root.add(gnd);
 
-// BUDE
+// pavement tiles (slightly lighter stripes)
+for (let i=-4; i<=4; i++) {
+  const tile = mesh(new THREE.PlaneGeometry(1.8, 20), C.ground2);
+  tile.rotation.x = -Math.PI/2; tile.position.set(i*2, 0.001, 0);
+  tile.receiveShadow = true; root.add(tile);
+}
+
+// ─────────────────────────────────────────────────────
+//  MAIN STALL BODY
+// ─────────────────────────────────────────────────────
 const stall = new THREE.Group();
+stall.position.set(0, 0, 0);
 root.add(stall);
-add(stall, box(5.6, 4.2, 0.22), C.wall, 0, 2.1, -1.5);
-add(stall, box(0.22,4.2, 3.4), C.wall2, -2.7, 2.1, 0.2);
-add(stall, box(0.22,4.2, 3.4), C.wall2, 2.7, 2.1, 0.2);
 
-// TRESEN
-add(stall, box(5.0, 0.16, 1.1), C.tan, 0, 1.35, 0.85);
+// ── Back wall ──────────────────────────────────────
+add(stall, box(5.6, 4.2, 0.22), C.wall,  0, 2.1, -1.5);
+// side walls
+add(stall, box(0.22,4.2, 3.4),  C.wall2,-2.7,2.1, 0.2);
+add(stall, box(0.22,4.2, 3.4),  C.wall2, 2.7,2.1, 0.2);
+// back wall base darker strip
+add(stall, box(5.6, 0.5, 0.24), C.wall2,  0, 0.25, -1.5);
+
+// ── Serving counter ────────────────────────────────
+// Counter top
+add(stall, box(5.0, 0.16, 1.1), C.tan,    0, 1.35,  0.85);
+// Counter face (front panel)
 add(stall, box(5.0, 1.2, 0.18), C.tanDark, 0, 0.75, 1.36);
+// Counter underside brace
+add(stall, box(4.6, 0.12, 0.9), C.tanDark, 0, 0.22, 0.82);
+// counter legs
+[[-2.2,0],[2.2,0],[-2.2,-0.6],[2.2,-0.6]].forEach(([x,z])=>{
+  add(stall, box(0.12,1.3,0.12), C.tanDark, x, 0.65, z+0.82);
+});
+// shelf on back wall
+add(stall, box(5.0, 0.1, 0.45), C.tanDark, 0, 2.5, -1.38);
+add(stall, box(5.0, 0.1, 0.45), C.tanDark, 0, 3.3, -1.38);
 
-// DACH & MARKISE
-const roof = add(stall, box(6.2, 0.22, 3.8), C.red, 0, 4.3, -0.1);
-const awn = add(stall, box(6.0, 0.14, 2.0), C.red, 0, 3.62, 1.7);
-awn.rotation.x = -0.28;
+// ── ROOF / AWNING ───────────────────────────────────
+// Roof main slab
+const roofG = new THREE.BoxGeometry(6.2, 0.22, 3.8);
+const roof = mesh(roofG, C.red);
+roof.position.set(0, 4.3, -0.1); stall.add(roof);
 
+// Awning – slope downward in front
+// Made from a thin box rotated
+const awn = mesh(new THREE.BoxGeometry(6.0, 0.14, 2.0), C.red);
+awn.position.set(0, 3.62, 1.7);
+awn.rotation.x = -0.28; stall.add(awn);
+
+// Awning stripes (white alternating)
 for (let i=-2.5; i<=2.5; i+=0.7) {
-    const s = add(stall, box(0.28, 0.16, 2.0), C.awningStripe, i, 3.63, 1.7);
-    s.rotation.x = -0.28;
+  const stripe = mesh(new THREE.BoxGeometry(0.28, 0.16, 2.0), C.awningStripe);
+  stripe.position.set(i, 3.63, 1.7);
+  stripe.rotation.x = -0.28;
+  stall.add(stripe);
 }
 
-// GLÜHBIRNEN
-const bulbMats = [];
-for (let i=-2.6; i<=2.7; i+=0.5) {
-    const mat = m(0xffeebb, {emissive: new THREE.Color(0xffcc44), emissiveIntensity:1.8});
-    bulbMats.push(mat);
-    add(stall, new THREE.SphereGeometry(0.08, 8, 8), mat, i, 3.06, 2.66);
+// Awning valance (the scalloped bottom edge — approximated with small boxes)
+for (let i=-2.7; i<=2.8; i+=0.42) {
+  const scallop = mesh(new THREE.BoxGeometry(0.34, 0.32, 0.08), C.red);
+  scallop.position.set(i, 3.1, 2.64);
+  stall.add(scallop);
 }
 
-// BELEUCHTUNG
-scene.add(new THREE.AmbientLight(0x2a1820, 1.2));
-const keyLight = new THREE.DirectionalLight(0xffeedd, 0.8);
-keyLight.position.set(5, 10, 5);
-keyLight.castShadow = true;
-scene.add(keyLight);
-
-const innerLight = new THREE.PointLight(0xff9944, 1.5, 6);
-innerLight.position.set(0, 2.5, 0.5);
-stall.add(innerLight);
-
-// LADEBALKEN LOGIK
-let pct = 0;
-const loadInterval = setInterval(() => {
-    pct += Math.random() * 15;
-    if (pct >= 100) {
-        pct=100;
-        clearInterval(loadInterval);
-        setTimeout(() => {
-            document.getElementById('loader').classList.add('done');
-        }, 500);
-    }
-    document.getElementById('loader-bar').style.width = pct+'%';
-    document.getElementById('loader-pct').textContent = Math.floor(pct)+'%';
-}, 100);
-
-// ANIMATION LOOP
-function animate() {
-    requestAnimationFrame(animate);
-    const t = performance.now() / 1000;
-    
-    if (autoRotate) theta += 0.002;
-    
-    // Blinkende Lichter
-    const bp = Math.floor(t*2) % 3;
-    bulbMats.forEach((bm, i) => {
-        bm.emissiveIntensity = (i % 3 === bp) ? 2.5 : 0.5;
-    });
-
-    updateCamera();
-    renderer.render(scene, camera);
-}
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+// Awning rods
+[-2.5, 2.5].forEach(x => {
+  add(stall, box(0.07, 1.1, 0.07), C.grey, x, 3.8, 2.3);
 });
 
+// ── SIGN BOARD (Hauptschild) ────────────────────────
+// Big hanging sign
+const sign = new THREE.Group();
+sign.position.set(0, 4.85, 0.6);
+stall.add(sign);
+
+// Sign board background
+add(sign, box(3.8, 0.8, 0.1), C.redDark, 0, 0, 0);
+// Sign border (thin bright strip)
+add(sign, box(3.96, 0.96, 0.08), C.yellow, 0, 0, -0.02);
+// Sign text glow bar
+add(sign, box(3.2, 0.44, 0.06), C.neon2,   0, 0.04, 0.07);
+// hanging chains
+[-1.7,1.7].forEach(x => {
+  for(let y=0; y<3; y++) {
+    add(sign, box(0.06, 0.13, 0.06), C.grey, x, 0.55+y*0.18, 0);
+  }
+});
+
+// ── MENU BOARD ─────────────────────────────────────
+// big chalkboard on back wall
+add(stall, box(4.5, 1.55, 0.12), C.skyBlue, 0, 3.1, -1.39);
+// menu board border
+add(stall, box(4.7, 1.75, 0.09), C.tanDark, 0, 3.1, -1.44);
+// menu "text" rows (abstract bars representing items + prices)
+const menuItems = [
+  [-1.2, 3.5,  1.5, 0.12],
+  [-1.2, 3.18, 1.5, 0.12],
+  [-1.2, 2.85, 1.5, 0.12],
+  [-1.2, 2.52, 1.0, 0.12],
+];
+menuItems.forEach(([x,y,w,h]) => {
+  add(stall, box(w, h, 0.06), C.white, x+w/2-0.8, y, -1.33);
+  // price
+  add(stall, box(0.45, h, 0.06), C.yellow, 1.4, y, -1.33);
+});
+
+// ── EQUIPMENT ON COUNTER / SHELF ────────────────────
+// Fryer (big box with basket)
+const fryer = new THREE.Group();
+fryer.position.set(-1.4, 1.43, 0.1);
+stall.add(fryer);
+add(fryer, box(0.85, 0.7, 0.75), C.grey,     0, 0.35, 0);
+add(fryer, box(0.75, 0.08, 0.65), C.greyLt,  0, 0.73, 0);
+// basket handle
+add(fryer, box(0.08, 0.28, 0.08), C.greyLt,  0, 0.88, 0);
+// oil / "window" on fryer
+add(fryer, box(0.55, 0.32, 0.07), C.orange,  0, 0.35, 0.38);
+// knobs
+[-0.25, 0.25].forEach(x => add(fryer, new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.05,10), C.dark), x, 0.06, 0.39));
+
+// Ketchup / mustard bottles on shelf
+const bottlePositions = [[-1.8,2.6,-1.15,'tomato'],[-1.3,2.6,-1.18,'mustard'],[-0.8,2.6,-1.16,'ketchup']];
+bottlePositions.forEach(([x,y,z,type]) => {
+  const bc = type==='mustard' ? m(0xe8c020) : type==='tomato' ? m(0xc02820) : m(0xc02820);
+  const bottle = new THREE.Group();
+  bottle.position.set(x,y,z);
+  stall.add(bottle);
+  add(bottle, new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.1,0.5,10), bc), 0,0.25,0);
+  add(bottle, new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.09,0.14,8), bc), 0,0.54,0);
+  add(bottle, new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,0.12,8), m(0xf0ece0)), 0,0.64,0);
+});
+
+// Fry boxes / cones on counter
+const fryBox = new THREE.Group();
+fryBox.position.set(0.8, 1.43, 0.55);
+stall.add(fryBox);
+// box body
+add(fryBox, box(0.32,0.38,0.22), C.red, 0,0.19,0);
+// white stripe on fry box
+add(fryBox, box(0.34,0.12,0.04), C.white, 0,0.26,0.12);
+// fries sticking out (little rods)
+[[-0.06,0],[0,0.04],[0.06,-0.02],[0.1,0.06],[-0.1,0.03]].forEach(([fx,foff])=>{
+  add(fryBox, box(0.04,0.22,0.04), C.orange, fx,0.48+foff,0.03);
+});
+
+// Napkin holder
+add(stall, box(0.22,0.28,0.12), C.white, 1.5, 1.5, 0.65);
+add(stall, box(0.04,0.28,0.12), C.grey,  1.38,1.5,0.65);
+add(stall, box(0.04,0.28,0.12), C.grey,  1.62,1.5,0.65);
+
+// Cash register / till
+const till = new THREE.Group();
+till.position.set(1.6, 1.43, 0.1);
+stall.add(till);
+add(till, box(0.7, 0.5, 0.5), C.greyLt, 0,0.25,0);
+add(till, box(0.6, 0.25, 0.06), m(0x2a3a5a), 0,0.42,0.28);  // little screen
+add(till, box(0.5, 0.07, 0.35), C.grey, 0,0.02,0.1);  // drawer
+// keys (tiny bumps)
+for(let r=0;r<3;r++) for(let c=0;c<4;c++) {
+  add(till, new THREE.Mesh(new THREE.BoxGeometry(0.07,0.05,0.07), C.dark), -0.15+c*0.1, 0.06+r*0.08, 0.24-r*0.02);
+}
+
+// ── BULBS STRING across awning ──────────────────────
+const bulbMats = [];
+for (let i=-2.6; i<=2.7; i+=0.5) {
+  const bm = m(0xffeebb); bm.emissive = new THREE.Color(0xffcc44); bm.emissiveIntensity = 1.8;
+  bulbMats.push(bm);
+  const bulbSph = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 8), bm);
+  bulbSph.position.set(i, 3.06+Math.sin(i*1.3)*0.04, 2.66);
+  stall.add(bulbSph);
+  // wire dip
+}
+// wire
+for(let i=-2.6; i<2.6; i+=0.5) {
+  const wire = mesh(new THREE.CylinderGeometry(0.012,0.012,0.5,6), C.dark);
+  wire.rotation.z = Math.PI/2;
+  wire.position.set(i+0.25, 3.07, 2.66);
+  stall.add(wire);
+}
+
+// ── KASSENHÄUSCHEN (small booth to the side) ────────
+const booth = new THREE.Group();
+booth.position.set(3.6, 0, 1.0);
+booth.rotation.y = -0.15;
+root.add(booth);
+
+// Base slab
+add(booth, box(1.5, 0.18, 1.5), C.tanDark, 0, 0.09, 0);
+// Main body
+add(booth, box(1.35, 2.2, 1.35), C.wall, 0, 1.28, 0);
+// Window opening (front)
+add(booth, box(0.82, 0.7, 0.25), C.glassW, 0, 1.55, 0.56);
+// window frame
+add(booth, box(0.94, 0.82, 0.12), C.tanDark, 0, 1.55, 0.6);
+// transaction slot
+add(booth, box(0.5, 0.08, 0.18), C.dark, 0, 1.18, 0.6);
+// window sill
+add(booth, box(1.0, 0.07, 0.25), C.tan, 0, 1.15, 0.62);
+// "KASSE" sign
+const kasseSign = mesh(box(0.8, 0.26, 0.1), C.redDark);
+kasseSign.position.set(0, 2.2, 0.68); booth.add(kasseSign);
+const kasseGlow = mesh(box(0.65, 0.14, 0.05), C.neon);
+kasseGlow.position.set(0, 2.2, 0.74); booth.add(kasseGlow);
+
+// Booth roof – hip style
+const boothRoof = mesh(box(1.6, 0.16, 1.6), C.red);
+boothRoof.position.set(0, 2.38, 0); booth.add(boothRoof);
+// peaked top
+const peak = new THREE.Mesh(new THREE.ConeGeometry(1.0, 0.75, 4), C.redDark);
+peak.rotation.y = Math.PI/4; peak.position.set(0, 2.87, 0); booth.add(peak);
+// corner trim
+[-0.67,0.67].forEach(x => [-0.67,0.67].forEach(z => {
+  add(booth, box(0.07,2.22,0.07), C.tanDark, x,1.28,z);
+}));
+// side windows
+[-1,1].forEach(s => {
+  add(booth, box(0.24, 0.55, 0.55), C.glassW, s*0.68, 1.5, 0);
+  add(booth, box(0.12, 0.65, 0.65), C.tanDark, s*0.68, 1.5, 0);
+});
+// booth interior warm light
+const bi = new THREE.PointLight(0xffbb66, 0.9, 3.5); bi.position.set(0,1.7,0); booth.add(bi);
+// small stool visible
+add(booth, box(0.35,0.06,0.35), C.tanDark, 0, 0.62, 0);
+add(booth, box(0.04,0.6,0.04), C.tanDark, -0.13,0.3,-0.13);
+add(booth, box(0.04,0.6,0.04), C.tanDark,  0.13,0.3,-0.13);
+add(booth, box(0.04,0.6,0.04), C.tanDark, -0.13,0.3, 0.13);
+add(booth, box(0.04,0.6,0.04), C.tanDark,  0.13,0.3, 0.13);
+
+// ── LAMP POST ───────────────────────────────────────
+function lampPost(x,z) {
+  const g = new THREE.Group();
+  g.position.set(x,0,z); root.add(g);
+  // post
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.08,5,10), C.dark);
+  post.position.y=2.5; g.add(post);
+  // base
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.22,0.25,10), C.dark);
+  base.position.y=0.125; g.add(base);
+  // decorative ring
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.09,0.025,8,16), C.grey);
+  ring.rotation.x=Math.PI/2; ring.position.y=3.5; g.add(ring);
+  // curved arm
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.9,8), C.dark);
+  arm.rotation.z = Math.PI/4*0.7; arm.position.set(0.3,5.0,0); g.add(arm);
+  // lamp head
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.15,0.25,10), C.grey);
+  head.position.set(0.55,5.2,0); g.add(head);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.22,0.07,10), C.dark);
+  cap.position.set(0.55,5.35,0); g.add(cap);
+  // bulb
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12,10,10), C.bulbOn);
+  bulb.position.set(0.55,5.05,0); g.add(bulb);
+  // light
+  const pl = new THREE.PointLight(0xffd97a,1.6,9,1.8);
+  pl.position.set(0.55,5.0,0); pl.castShadow=true;
+  pl.shadow.mapSize.set(512,512); g.add(pl);
+  return g;
+}
+lampPost(-4, 3.5);
+lampPost(-4, -1.5);
+
+// ── POTTED PLANTS ───────────────────────────────────
+function plant(x,z) {
+  const g = new THREE.Group(); g.position.set(x,0,z); root.add(g);
+  // pot
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.18,0.38,10), m(0xc07830));
+  pot.position.y=0.19; g.add(pot);
+  const soil = new THREE.Mesh(new THREE.CylinderGeometry(0.21,0.21,0.04,10), m(0x3a2810));
+  soil.position.y=0.39; g.add(soil);
+  // leaves (blobs)
+  [[0,0.6,0],[0.15,0.72,0.1],[-0.12,0.68,-0.08],[0.05,0.8,0.12]].forEach(([lx,ly,lz])=>{
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.18+Math.random()*0.08,8,6), C.green);
+    leaf.scale.y=1.2; leaf.position.set(lx,ly,lz); g.add(leaf);
+  });
+  return g;
+}
+plant(-3.2, 2.2);
+plant( 3.2, 2.2);
+plant(-3.8, 1.0);
+
+// ── MENU BOARD / A-FRAME SIGN on ground ─────────────
+const aframe = new THREE.Group();
+aframe.position.set(-2.8, 0, 3.2); aframe.rotation.y=0.3; root.add(aframe);
+// two panels meeting at top
+[[0.2,-0.3,0.15],[- 0.2,-0.3,-0.15]].forEach(([x,y,z],i) => {
+  const panel = mesh(box(0.85,1.3,0.07), i===0 ? C.wall : C.wall2);
+  panel.position.set(x,0.7,z); panel.rotation.y = i===0 ? -0.25 : 0.25;
+  aframe.add(panel);
+  const border = mesh(box(0.97,1.42,0.05), C.tanDark);
+  border.position.set(x,0.7,z); border.rotation.y = i===0 ? -0.25 : 0.25;
+  border.position.y=0.7; aframe.add(border);
+});
+// text lines on A-frame
+for(let r=0;r<4;r++) {
+  const line = mesh(box(0.55,0.09,0.04), r===0 ? C.red : C.grey);
+  line.position.set(0.24,1.1-r*0.22,0.22); line.rotation.y=-0.25; aframe.add(line);
+}
+// legs
+[[-0.15,0.1],[0.15,-0.1]].forEach(([x,z])=>{
+  const leg = mesh(box(0.05,0.5,0.05),C.tanDark); leg.position.set(x,0.25,z); aframe.add(leg);
+});
+
+// ── WIRES / STRING ACROSS SCENE ─────────────────────
+// decorative wire from lamp to stall
+const wireMat = m(0x222022);
+const wire1 = new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,4.2,4), wireMat);
+wire1.rotation.z=Math.PI/2-0.15; wire1.position.set(-2.2,4.6,1); root.add(wire1);
+
+// ── SMALL FLAGS on awning edge ───────────────────────
+[-2.1,-0.7,0.7,2.1].forEach(x => {
+  const flag = mesh(box(0.25,0.32,0.04), x%1.4===0 ? C.red : C.yellow);
+  flag.position.set(x, 2.98, 2.7); stall.add(flag);
+  const pole = mesh(box(0.04,0.4,0.04), C.grey);
+  pole.position.set(x, 3.18, 2.7); stall.add(pole);
+});
+
+// ─────────────────────────────────────────────────────
+//  LIGHTING  (Jesse-style: warm, baked, soft)
+// ─────────────────────────────────────────────────────
+// Very soft ambient (night)
+scene.add(new THREE.AmbientLight(0x2a1820, 1.2));
+
+// Key light – warm overhead (like a warm street lamp above the scene)
+const key = new THREE.DirectionalLight(0xffeedd, 0.5);
+key.position.set(3, 10, 6);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.camera.near = 0.5;
+key.shadow.camera.far = 30;
+key.shadow.camera.left = -8;
+key.shadow.camera.right = 8;
+key.shadow.camera.top = 8;
+key.shadow.camera.bottom = -4;
+key.shadow.bias = -0.001;
+scene.add(key);
+
+// Awning glow – warm orange from inside stall
+const awningLight = new THREE.PointLight(0xff9944, 1.2, 7, 1.6);
+awningLight.position.set(0, 3.0, 1.5);
+root.add(awningLight);
+
+// Sign glow
+const signLight = new THREE.PointLight(0xffcc44, 0.8, 4, 2);
+signLight.position.set(0, 4.9, 1.0);
+root.add(signLight);
+
+// Counter inside warm fill
+const innerLight = new THREE.PointLight(0xffbb66, 1.0, 5, 2);
+innerLight.position.set(0, 2.0, -0.5);
+root.add(innerLight);
+
+// neon kasse glow
+const kasseLight = new THREE.PointLight(0xff4422, 0.6, 3, 2);
+kasseLight.position.set(3.6, 2.2, 1.6);
+root.add(kasseLight);
+
+// ─────────────────────────────────────────────────────
+//  LOADING SCREEN
+// ─────────────────────────────────────────────────────
+let pct = 0;
+const pctEl  = document.getElementById('loader-pct');
+const barEl  = document.getElementById('loader-bar');
+const loaderEl = document.getElementById('loader');
+
+const loadInterval = setInterval(() => {
+  pct += Math.random() * 14 + 4;
+  if (pct >= 100) { pct=100; clearInterval(loadInterval); finishLoad(); }
+  barEl.style.width = pct+'%';
+  pctEl.textContent = Math.floor(pct)+'%';
+}, 100);
+
+function finishLoad() {
+  setTimeout(() => { loaderEl.classList.add('done'); setTimeout(()=>loaderEl.remove(),900); }, 300);
+}
+
+// ─────────────────────────────────────────────────────
+//  ANIMATE
+// ─────────────────────────────────────────────────────
+let bulbPhase = 0;
+const clock = { t: () => performance.now()/1000 };
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.t();
+
+  // gentle auto-rotate
+  if (autoRotate) theta = 0.3 + Math.sin(t * 0.1) * 0.18;
+
+  // bulb chase
+  const bp = Math.floor(t*2) % 3;
+  bulbMats.forEach((bm,i) => {
+    bm.emissiveIntensity = (i%3===bp) ? 2.2 : 0.3;
+  });
+
+  // gentle sign flicker
+  signLight.intensity = 0.7 + Math.sin(t*1.3)*0.12 + (Math.random()<0.01 ? -0.3 : 0);
+  kasseLight.intensity = 0.5 + Math.sin(t*0.9)*0.1;
+  awningLight.intensity = 1.1 + Math.sin(t*0.5)*0.12;
+
+  updateCamera();
+  renderer.render(scene, camera);
+}
+
 animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
 </script>
 </body>
 </html>
